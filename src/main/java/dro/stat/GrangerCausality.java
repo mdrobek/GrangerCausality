@@ -2,6 +2,8 @@ package dro.stat;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.stream.DoubleStream;
 
 import org.apache.commons.math3.distribution.FDistribution;
 import org.apache.commons.math3.linear.SingularMatrixException;
@@ -174,12 +176,9 @@ public abstract class GrangerCausality {
      * @param a The original array for which a sum of squares shall be computed.
      * @return The sum of all squares for each element in the given array: result = a1*a1 + a2*a2 +
      *  ... + an*an 
-     *  TODO: Use stream -> map and sum
      */
     protected double sqrSum(double[] a){
-        double res = 0;
-        for(double v : a) { res+=v*v; }
-        return res;
+        return DoubleStream.of(a).reduce(0.0, (accu, next) -> accu + next*next );
     }
     
     /**
@@ -263,12 +262,15 @@ public abstract class GrangerCausality {
     /**
      * Cuts of the first 'l' leading elements in the given array a and returns the remaining array
      * with a length of a.length-l.
-     * @param l The number of leading values to cut of the given array.
      * @param a The original array that should be shortened.
      * @return An array that contains the remaining elements of a, after the first 'l' elements
      * have been cut off.
      */
-    protected double[] strip(double[] a){
+    protected double[] strip(double[] a) {
+        if (a.length < this.lagSize) {
+            throw new RuntimeException(String.format("Can't cut %d elements from array with length "
+                + "%d: %s", this.lagSize, a.length, Arrays.toString(a)));
+        }
         double[] res = new double[a.length-this.lagSize];
         System.arraycopy(a, this.lagSize, res, 0, res.length);
         return res;
