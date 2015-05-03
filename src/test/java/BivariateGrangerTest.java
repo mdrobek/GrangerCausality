@@ -1,3 +1,4 @@
+import dro.stat.GrangerCausality;
 import dro.stat.GrangerCausalityStrategy_Bivariate;
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,6 +12,45 @@ import org.junit.Test;
  * @since 02/05/15
  */
 public class BivariateGrangerTest {
+
+    // missing functions under test in GrangerCausality class:
+    // - checkDataSizeConstraints
+    // - createLaggedSide
+    // - performGranger
+
+    // missing functions under test in GrangerCausalityStrategy_Bivariate class:
+    // - apply
+
+    /**
+     * Tests the maximum lag size possible for a given number of observations and the number of
+     * variables in the universe (this method is not limited to bivariate analysis).
+     */
+    @Test
+    public void testMaxLagSize() {
+        // T1) Expect an exception, if the user tries to compute the maximum lag with parameters
+        //     smaller than 1
+        try {
+            GrangerCausality.getMaximumLagSize(0, 5);
+            Assert.fail();
+        } catch ( Exception ex ) { /* Expected result */ }
+        try {
+            GrangerCausality.getMaximumLagSize(1, 0);
+            Assert.fail();
+        } catch ( Exception ex ) { /* Expected result */ }
+
+        // T2) Expect an exception, if a minimum lag size of 1 can't be satisfied for the given
+        //     parameters. E.g., if the universe contains 3 variables, at least 4 observations are
+        //     required to satisfy the linear Granger system of equations for a lag size of 1
+        try {
+            GrangerCausality.getMaximumLagSize(3, 3);
+            Assert.fail();
+        } catch (Exception ex) { /* Expected result */ }
+
+        // T3) Test the maximum lag size for one example, e.g., if we have 5 variables and
+        //     50 observations, we expect a maximum lag size of 8
+        int maxLag = GrangerCausality.getMaximumLagSize(50, 5);
+        Assert.assertEquals(8, maxLag, 0);
+    }
 
     /**
      * Tests the square sum method.
@@ -46,7 +86,6 @@ public class BivariateGrangerTest {
 
         // T2) Stripping of an array should always create a new array
         testArr = new double[] { 0, 0, 0, 0, 0 };
-        double[] testArr1 = new double[] { 0, 0, 0, 0, 0 };
         double[] stripped = big.strip(testArr);
         Assert.assertFalse(stripped.equals(testArr));
         BivariateGrangerImpl big0 = new BivariateGrangerImpl(0);

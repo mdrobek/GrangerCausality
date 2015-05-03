@@ -221,20 +221,28 @@ public abstract class GrangerCausality {
     /**
      * Computes the maximum possible lag window size (maximum amount of historical information) that
      * can be used for the given size of your universe.
-     * @param nbrOfObservations The number of observations for the given data (data size).
-     * @param nbrOfVariables The number of unique variables in the current universe. 
+     * @param nbrOfObservations The number of observations for the given data (data size). This is
+     *                          not the number of equations, but rather the number of historical
+     *                          data points for each variable, respectively. Has to be greater
+     *                          than 0.
+     * @param nbrOfVariables The number of unique variables in the current universe. Has to be
+     *                       greater than 0.
      * @return The maximum lag that can be used to compute the Granger-Causality for the given
      * data size and number of unique variables. 
      */
     public static int getMaximumLagSize(int nbrOfObservations, int nbrOfVariables) {
-    	// 1) Check if there's enough data for at least a lag of 1.
+        // 1) Number of observations and number of variables have to be greater than 0
+        if (nbrOfObservations <= 0 || nbrOfVariables <= 0)
+            throw new RuntimeException(String.format("The number of observations (%d) or the "
+                    + "number of variables (%d) is smaller than 1.",
+                    nbrOfObservations, nbrOfVariables));
+    	// 2) Check if there's enough data for at least a lag of 1.
     	//    If we can't even support a lag of 1 throw an error.
     	if (nbrOfObservations-1 < nbrOfVariables)
-    		throw new RuntimeException(String.format("ERROR: There's not even enough data (%s) "
+    		throw new RuntimeException(String.format("There's not even enough data (%s) "
     				+ "available for a lag size of 1 for the given number of variables (%s)",
     				nbrOfObservations, nbrOfVariables));
-    	
-    	// 2) Find the maximum lag, that satisfies the following condition:
+    	// 3) Find the maximum lag, that satisfies the following condition:
     	int maxLag = (int)Math.floor(nbrOfObservations/(nbrOfVariables+1));
 //    	int maxLag = 1;
 //    	for (int curLag=1; curLag<Integer.MAX_VALUE; curLag++) {
