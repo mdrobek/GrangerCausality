@@ -84,7 +84,7 @@ public class BivariateGrangerTest {
             Assert.fail();
         } catch (Exception e) { /* Nothing to do here */ }
 
-        // T2) Stripping of an array should always create a new array
+        // T2) Stripping of an array should always create a new array (object)
         testArr = new double[] { 0, 0, 0, 0, 0 };
         double[] stripped = big.strip(testArr);
         Assert.assertFalse(stripped.equals(testArr));
