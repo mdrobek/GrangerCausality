@@ -54,7 +54,7 @@ public class GrangerCausalityStrategy_Bivariate extends GrangerCausality {
 		// Granger-Causality can't be computed for the same time series (which have the same values)
 		if (y.equals(x)) return null;
 		// Check whether the GrangerTest can be applied or not
-		if (checkDataSizeConstraints(y.length, 2, super.lagSize)) {
+		if (super.checkDataSizeConstraints(y.length, 2, super.lagSize)) {
 			// Apply the actual test with y = tsValues[0], x = tsValues[1]
 			double[][] laggedY = createLaggedSide(y);
 			double[][] laggedXY = createLaggedSide(x, y);

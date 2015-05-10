@@ -13,13 +13,50 @@ import org.junit.Test;
  */
 public class BivariateGrangerTest {
 
+    // missing functions under test in GrangerCausalityStrategy_Bivariate class:
+    // - apply
+
     // missing functions under test in GrangerCausality class:
     // - checkDataSizeConstraints
     // - createLaggedSide
-    // - performGranger
 
-    // missing functions under test in GrangerCausalityStrategy_Bivariate class:
-    // - apply
+    /**
+     * Tests to verify the 'apply' method.
+     */
+    @Test
+    public void testApplyMethod() {
+        // Not a test yet!
+        double[] y = new double[]{ 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+        double[] x = new double[]{ 80, 70, 60, 50, 40, 30, 20, 10, 0 };
+        GrangerCausalityStrategy_Bivariate big = new BivariateGrangerImpl(2);
+        big.apply(y, x);
+    }
+
+    /**
+     * Tests the creation of the lagged matrix for the Granger model.
+     */
+    @Test
+    public void testCreateLaggedSide() {
+
+    }
+
+    /**
+     * Tests whether the method correctly prevents the computation of Granger-Causality, if the
+     * given data sets are invalid (if their size doesn't adhere to predefined constraints).
+     */
+    @Test
+    public void testDataSizeConstraints() {
+        GrangerCausalityStrategy_Bivariate big = new BivariateGrangerImpl(3);
+        // T1) Expect an exception, if the number of predictors is greater than the remaining data
+        //     size for the lagged matrix creation
+        //     lag size = 3, data size = 9, variables = 2, predictors = 6
+        double[] y = new double[]{ 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+        double[] x = new double[]{ 80, 70, 60, 50, 40, 30, 20, 10, 0 };
+        try {
+            big.apply(y, x);
+            Assert.fail();
+        } catch (Exception e) { /* Expected exception */ }
+    }
 
     /**
      * Tests the maximum lag size possible for a given number of observations and the number of

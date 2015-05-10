@@ -184,7 +184,7 @@ public abstract class GrangerCausality {
     /**
      * Checks, whether the GrangerTest can be applied for the given time series data size and
      * the given lag size.
-     * @param dataSize Is the number of observations.
+     * @param dataSize Is the number of observations (the length of the time series).
      * @param nbrOfVariables The number of unique variables in the given universe (e.g., 2 in case
      *                       of only y and x). ATTENTION: This is not the number of parameters in
      *                       the Granger-model.
@@ -198,13 +198,13 @@ public abstract class GrangerCausality {
     	//  Available data resolves to the overall data length - the lag size
     	int observedDataSize = dataSize-lagSize;
     	// Nbr of predictors is computed from the lagged XY matrix length (this is the number
-    	// of parameters in the VAR model
+    	// of parameters in the VAR model)
     	int nbrOfPredictors = nbrOfVariables*lagSize;
     	if (observedDataSize <= nbrOfPredictors) {
     		// Keep in mind that the referenced 'data' in the following error message DOES NOT
     		// refer to the given time series data size, but rather to the lagged matrices size!!
     		throw new RuntimeException(String.format("There is "
-    			+ "not enough data availabe (%d) to satisfy all predictors (%d) computed for the "
+    			+ "not enough data available (%d) to satisfy all predictors (%d) computed for the "
     			+ "given lag size (%d)",
     			observedDataSize, nbrOfPredictors, lagSize));
     	}
@@ -212,7 +212,7 @@ public abstract class GrangerCausality {
 //    	int maxLagSize = (int)Math.ceil((dataSize - 1) / 3.0);
     	int maxLagSize = getMaximumLagSize(observedDataSize, nbrOfVariables);
     	if (lagSize > maxLagSize) throw new RuntimeException(String.format("The lag size (%d) is "
-    			+ "to big for the given data size (%d) and the GrangerTest contraints "
+    			+ "too big for the given data size (%d) and the GrangerTest constraints "
     			+ "(max lag size = %d).",
     			lagSize, dataSize, maxLagSize));
     	return true;
@@ -243,16 +243,7 @@ public abstract class GrangerCausality {
     				+ "available for a lag size of 1 for the given number of variables (%s)",
     				nbrOfObservations, nbrOfVariables));
     	// 3) Find the maximum lag, that satisfies the following condition:
-    	int maxLag = (int)Math.floor(nbrOfObservations/(nbrOfVariables+1));
-//    	int maxLag = 1;
-//    	for (int curLag=1; curLag<Integer.MAX_VALUE; curLag++) {
-//    		if (nbrOfObservations-curLag > nbrOfVariables*curLag) {
-//    			maxLag = curLag;
-//    		} else {
-//    			break;
-//    		}
-//    	}
-    	return maxLag;
+    	return (int)Math.floor(nbrOfObservations/(nbrOfVariables+1));
     }
     
 //    private Pair<Integer, Integer> computeGrangerTestContraints(int dataSize, int lagSize) {
